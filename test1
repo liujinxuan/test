@@ -1,0 +1,284 @@
+//Linear Table On On Link List Structure
+#include<stdio.h>
+#include<conio.h>
+#include<stdlib.h>
+#define TRUE 1
+#define FALSE 0
+ 
+typedef int DataType; //数据元素类型定义
+DataType x;
+ 
+typedef struct node //线性表链式存储结构的定义
+{
+	DataType data;
+	struct node*next;
+}LNode,*LinkList;
+ 
+//注意：下面的链表都采用带头节点的结构 
+LinkList CreateLinkList(int n); //带n个节点的链表,返回链表的头指针
+void PrintLinkList(LinkList H);//以(a1,a2,...,an)格式输出链表
+void EmptyLinkList(LinkList H);  //把链表H清空
+int LengthLinkList(LinkList H);  //返回链表H的长度  
+LNode* GetLinkList(LinkList H,int i); //查找第i节点，找到返回指向第i个节点指针,否则返回NULL
+LinkList LocateLinkList(LinkList H, DataType x); //查找元素x的位置，找到返回指向该结点指针,否则返回NULL
+int InsertLinkList(LinkList H, int i, DataType x);//在链表H的第i个位置上插入值为x的元素，成功返回TRUE,否则FALSE
+int DeleteLinkList(LinkList H, int i);//删除单链表H上的第i个节点
+ 
+int main()
+{
+	LinkList H;  //定义一个链表指针 
+	int i=0; 
+	LinkList m; 
+	//生成菜单 
+	char sel=' ';
+	while(sel!='0')
+	{
+		//生成菜单 
+		printf("------线性表(链式存储结构)演示系统-------\n");
+		printf("   版本:1.0   作者:金春依 日期:2022/03/24\n");
+		printf("------------------------------------------\n");
+		printf("       1.创建线性表\n");   
+		printf("       2.查找元素位置\n"); 
+		printf("       3.按位置查找元素\n");
+		printf("       4.插入一个元素\n");
+		printf("       5.删除一个元素\n");
+		printf("       6.打印线性表\n");  
+		printf("       7.打印线表长度\n");
+		printf("       8.清空线性表\n");
+		printf("       9.清空屏幕\n"); 
+		printf("       0.退出系统\n"); 
+		printf("请输入选项[0-9]:\n");
+		sel = getchar();
+		switch(sel)
+		{
+			case '1':
+				int n;
+				printf("创建线性表操作.\n");
+				printf("请输入你要创建线性表的长度：");
+				scanf("%d",&n);
+				H = CreateLinkList(n);
+			    PrintLinkList(H);//打印线性表
+				system("pause"); //按任意键继续 
+				break;
+			case '2':
+				printf("查找元素操作.\n");   
+				printf("你想查找哪个元素的位置：");
+			    scanf("%d", &x);
+			    m=LocateLinkList(H,x);//查找元素x的位置，找到返回指向该结点指针,否则返回NULL
+			    if(m)
+			    {
+			    	printf("该元素在%p位置上\n", m);
+				}
+				else
+				{
+					printf("该元素不存在NULL");
+				}
+			    PrintLinkList(H);//打印线性表
+				system("pause"); //按任意键继续 
+				break;
+			case '3':
+				printf("按位置查找元素操作.\n");
+				printf("你想查找哪个位置的元素：");
+			    scanf("%d", &i);
+				printf("该位置上的元素是%d\n",GetLinkList(H,i)->data);
+				PrintLinkList(H);//打印线性表
+				system("pause"); //按任意键继续 
+				break;
+			case '4':
+				printf("插入一个元素操作.\n");
+			    printf("你想在第几个位置插入什么元素：\n");
+			    scanf("%d%d", &i,&x);
+			    InsertLinkList(H, i, x);//插入元素函数
+			    PrintLinkList(H);//打印线性表
+				system("pause"); //按任意键继续 
+				break;
+			case '5':
+				printf("删除一个元素操作.\n");
+				printf("想删除第几个元素：");
+				scanf("%d", &i);
+				DeleteLinkList(H, i);
+				PrintLinkList(H);//打印线性表
+				system("pause"); //按任意键继续 
+				break;
+			case '6':
+				printf("显示线性表操作.\n");
+				PrintLinkList(H);//打印线性表
+				system("pause"); //按任意键继续 
+				break;
+			case '7':
+				printf("显示线性表长度.\n");
+				printf("线性表长度为：%d\n",LengthLinkList(H)); 
+				PrintLinkList(H);//打印线性表
+				system("pause"); //按任意键继续 
+				break;
+			case '8':
+				printf("清空线性表操作.\n");
+				EmptyLinkList(H);//把链表H清空
+				//PrintLinkList(H);//打印线性表
+				system("pause"); //按任意键继续 
+				break;
+			case '9':
+				system("cls");
+				break;
+			case '0':
+				printf("\n谢谢使用，再见！\n");
+				break;
+			default:
+				printf("您输入的选项不合法，请重新选择！\n");
+		}
+	}
+ 
+	return 0;
+} 
+ 
+//创建带n个节点的链表,返回链表的头指针
+LinkList CreateLinkList(int n)
+{
+	LinkList H,T;
+	H = (LinkList) malloc(sizeof(LNode));  //申请一个LNode节点，把H指向这个新申请的节点 void*
+	H->next = NULL; //(*H).next = NULL;
+	T=H;
+	int i;
+	printf("请输入%d个整数：",n);
+	for(i=0;i<n;i++)
+	{
+		int x;
+		LinkList p;
+		scanf("%d",&x);
+		//申请节点p，放入x 
+		p=(LinkList)malloc(sizeof(LNode));
+		p->data = x;
+		p->next = NULL;
+		
+		//把p点接入T后面
+		T->next = p;
+		T=p;
+	} 
+	return H;
+}
+ 
+void PrintLinkList(LinkList H)//以(a1,a2,...,an)格式输出链表
+{
+ 
+	H=H->next;  //指向第1个节点 
+	//输出(
+	 
+	printf("线性表为：(");
+	
+	//输出前n-1个元素 
+	//for(i=1;i<L->length;i++)
+	while(H!=NULL && H->next!=NULL)  //保证后面还有节点
+	{
+		printf("%2d,",H->data);  //O(n)
+		H=H->next;
+	}
+	//输出最后一个元素
+	
+	if(H!=NULL)
+		printf("%2d",H->data);
+	//输出）
+	printf(")"); 
+	printf("\n");
+	
+}
+ 
+int LengthLinkList(LinkList H)  //返回链表H的长度  
+{
+	int len=0;
+	H=H->next;
+	while(H!=NULL)
+	{
+		len++;
+		H=H->next;
+	}
+	return len;
+}
+ 
+void EmptyLinkList(LinkList H)//把链表H清空
+{
+	LinkList p = H;
+	while (p != NULL)
+	{
+		LinkList p1 = p;
+		free(p1);
+		p = p->next;
+	}
+}
+ 
+int InsertLinkList(LinkList head, int i, DataType x)
+{
+    //在带头结点链表H的第i个位置上插入值为x的元素
+	//成功返回TRUE,否则FALSE
+	LinkList q = head;
+	//首先要找到插入位置的上一个节点
+	for (int j = 1; j < i; j++)
+	{
+		if (q == NULL)
+		{
+			printf("插入位置无效\n");
+			return FALSE;
+		}
+		q = q->next;
+	}
+	LinkList p= (LinkList)malloc(sizeof(LNode));
+	p->data = x;//给节点p赋值x
+	p->next = q->next;
+	q->next = p;
+	return TRUE;
+}
+ 
+int DeleteLinkList(LinkList H, int i) 
+{
+   //删除单链表H上的第i个节点
+	//被删除结点的数据由x带回，删除成功返回1，失败返回0
+	LinkList p = H;
+	LinkList q;
+	int j = 0;
+	while (p->next != NULL && j < i - 1 && p->next->next != NULL)
+	{
+		//p->next != NULL保证第i-1个结点存在
+		//p->next ->next!= NULL保证第i个结点存在
+		//j < i - 1保证循环结束指针p指向第i-1个结点
+		//这样p->next就指向第i个指针了，也就是说，（q=p->next）q指针指向的结点就是第i个指针要删除的
+		p = p->next;
+		j++;
+	}
+	if (j != i - 1)
+	{
+		printf("插入元素位置参数错误\n");
+		return FALSE;
+	}
+	q = p->next;//指针q指向第i个结点
+	x = q->data;//把指针q指向结点里的数据放在x里带回
+	p->next = p->next->next;//删除q指向的第i个结点,使第i个结点脱链
+	free(q);//释放指针q所指结点的内存空间
+	return TRUE;
+}
+ 
+LinkList LocateLinkList(LinkList H, DataType x) //查找元素x的位置，找到返回指向该结点指针,否则返回NULL
+{
+	LinkList p = H;
+	while(p!=NULL&&p->data!=x)
+	{
+		p=p->next;
+	}
+	return p;
+}
+ 
+ 
+LNode* GetLinkList(LinkList H,int i)//查找第i节点，找到返回指向第i个节点指针,否则返回NULL
+{
+	if(i<0)
+	{
+		return NULL;
+	}
+	LNode* p;
+	int j=0;
+	p=H;
+	while(p!=NULL&&j<i)
+	{
+		p=p->next;
+		j++;
+	}
+	return p;
+}
